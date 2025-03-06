@@ -117,7 +117,6 @@ export async function getOrderDetails(orderId: number): Promise<OrderDetails> {
     const data = await response.json();
     return data; // Retorna os detalhes do pedido
   } catch (error: any) {
-    //console.error("Order details retrieval error:", error.message);
     throw new Error(error.message || "Erro ao buscar detalhes do pedido");
   }
 }

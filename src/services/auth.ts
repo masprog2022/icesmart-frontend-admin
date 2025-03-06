@@ -28,7 +28,6 @@ export async function login(
     const data: LoginResponse = await response.json();
     return data;
   } catch (error) {
-    //console.error("Erro ao fazer login:", error);
     return null;
   }
 }

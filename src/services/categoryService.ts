@@ -38,7 +38,6 @@ export async function getData(): Promise<Category[]> {
     const data = await response.json();
     return data;
   } catch (error) {
-    //console.error("Data retrieval error:", error);
     return [];
   }
 }
@@ -129,7 +128,6 @@ export async function updateCategory(
 
     return await response.json();
   } catch (error: any) {
-    console.error("Erro ao atualizar categoria:", error.message);
     throw new Error(
       error.message || "Erro desconhecido ao atualizar categoria"
     );

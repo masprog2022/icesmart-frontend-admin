@@ -135,7 +135,7 @@ export const updateProduct = async (
     price: number;
     discount: number;
     imageUrl: string;
-    categoryId: number; // Alterado para number
+    categoryId: number;
   }
 ): Promise<Product> => {
   try {
@@ -199,7 +199,7 @@ export async function getProductName(productId: number): Promise<string> {
     }
 
     const data = await response.json();
-    return data.name; // Assume que o backend retorna { "name": "Gelo Seco" }
+    return data.name; // backend retorna { "name": "Gelo Seco" } por exemplo
   } catch (error: any) {
     console.error("Erro ao buscar nome do produto:", error.message);
     throw new Error(
