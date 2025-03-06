@@ -1,9 +1,14 @@
+"use client";
+
+import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
+  DialogFooter,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { Separator } from "@/components/ui/separator";
 import { toast } from "@/hooks/use-toast";
 import { updateProduct } from "@/services/productService";
 import { useState } from "react";
@@ -35,7 +40,6 @@ interface EditProductModalProps {
   }) => void;
 }
 
-// EditProductModal.tsx
 export function EditProductModal({
   isOpen,
   setIsOpen,
@@ -87,18 +91,38 @@ export function EditProductModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
-      <DialogContent>
+      <DialogContent className="p-6 max-w-xl w-full">
         <DialogHeader>
-          <DialogTitle>Editar Produto</DialogTitle>
+          <DialogTitle className="text-[22px]">Editar Produto</DialogTitle>
         </DialogHeader>
-        {product && (
-          <EditProductForm
-            initialValues={product}
-            onSubmit={handleSubmit}
-            categories={categories}
-            onSuccess={() => setIsOpen(false)}
-          />
-        )}
+        <Separator />
+        <div className="flex flex-col gap-4 mt-1">
+          {product && (
+            <EditProductForm
+              initialValues={product}
+              onSubmit={handleSubmit}
+              categories={categories}
+              onSuccess={() => setIsOpen(false)}
+            />
+          )}
+        </div>
+        <DialogFooter className="mt-6 flex justify-end gap-4">
+          <Button
+            variant="secondary"
+            className="h-10 w-32"
+            onClick={() => setIsOpen(false)}
+            disabled={loading}
+          >
+            Cancelar
+          </Button>
+          <Button
+            className="h-10 w-32"
+            onClick={() => document.querySelector("form")?.requestSubmit()}
+            disabled={loading}
+          >
+            {loading ? "Salvando..." : "Salvar"}
+          </Button>
+        </DialogFooter>
       </DialogContent>
     </Dialog>
   );
