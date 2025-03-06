@@ -10,8 +10,9 @@ import {
 } from "@/components/ui/dialog";
 import { Separator } from "@/components/ui/separator";
 import { toast } from "@/hooks/use-toast";
+import { getData, ICategory } from "@/services/categoryService"; // Importar getData
 import { updateProduct } from "@/services/productService";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { EditProductForm } from "./edit-product-form";
 
 interface EditProductModalProps {
@@ -27,7 +28,7 @@ interface EditProductModalProps {
     imageUrl: string;
     categoryId: string;
   } | null;
-  categories: { id: number; name: string }[];
+  categories: { id: number; name: string }[]; // Mantido como fallback
   onProductUpdated?: (product: {
     id: number;
     name: string;
@@ -36,7 +37,7 @@ interface EditProductModalProps {
     price: number;
     discount: number;
     imageUrl: string;
-    categoryId: string;
+    categoryId: number;
   }) => void;
 }
 
@@ -44,10 +45,35 @@ export function EditProductModal({
   isOpen,
   setIsOpen,
   product,
-  categories,
+  categories: propCategories, // Renomeado para evitar conflito
   onProductUpdated,
 }: EditProductModalProps) {
   const [loading, setLoading] = useState(false);
+  const [fetchedCategories, setFetchedCategories] = useState<ICategory[]>([]);
+
+  // Busca as categorias ao abrir o modal, se necessário
+  useEffect(() => {
+    async function fetchCategories() {
+      try {
+        const response = await getData();
+        setFetchedCategories(response);
+      } catch (error) {
+        toast({
+          title: "Erro",
+          description: "Falha ao carregar categorias.",
+          variant: "destructive",
+        });
+      }
+    }
+
+    if (isOpen && propCategories.length === 0) {
+      fetchCategories(); // Busca apenas se propCategories estiver vazio
+    }
+  }, [isOpen, propCategories]);
+
+  // Usa propCategories se disponível, senão fetchedCategories
+  const effectiveCategories =
+    propCategories.length > 0 ? propCategories : fetchedCategories;
 
   const handleSubmit = async (data: {
     name: string;
@@ -70,7 +96,11 @@ export function EditProductModal({
     setLoading(true);
 
     try {
-      const updatedProduct = await updateProduct(product.id, data);
+      const updatedData = {
+        ...data,
+        categoryId: Number(data.categoryId),
+      };
+      const updatedProduct = await updateProduct(product.id, updatedData);
       onProductUpdated?.(updatedProduct);
       setIsOpen(false);
       toast({
@@ -101,7 +131,7 @@ export function EditProductModal({
             <EditProductForm
               initialValues={product}
               onSubmit={handleSubmit}
-              categories={categories}
+              categories={effectiveCategories} // Usa categorias efetivas
               onSuccess={() => setIsOpen(false)}
             />
           )}

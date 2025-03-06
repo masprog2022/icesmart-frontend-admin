@@ -7,7 +7,7 @@ export interface Product {
   discount: number;
   specialPrice: number;
   categoryName: string;
-  categoryId: string;
+  categoryId: number;
   isActive: boolean;
   imageUrl: string;
   createdAt?: string;
